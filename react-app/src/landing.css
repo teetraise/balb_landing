@@ -96,11 +96,11 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
   align-items: stretch;
   background: #ffffff;
   border-radius: 20px;
-  padding: 36px 32px;
+  padding: 36px 0 0 0; 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   width: clamp(260px, 23vw, 340px);
@@ -111,6 +111,7 @@
 
 .card h2 {
   margin: 0;
+  padding: 0 32px;
   text-align: left;
   align-self: flex-start;
   color: #111111;
@@ -121,8 +122,10 @@
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-end;      
   justify-content: center;
+  padding: 0 20px;            
+  box-sizing: border-box;
 }
 
 .card-media img {
@@ -133,7 +136,9 @@
   object-fit: contain;
   display: block;
 }
-
+.card-media--phone img {
+  transform: scale(1.12) translateX(4%);
+}
 .card-bubbles {
   position: relative;
   width: 100%;
@@ -144,12 +149,8 @@
 
 .card-bubble {
   position: absolute;
-  width: 88%;
   height: auto;
   display: block;
-  left: calc(var(--i) * 12%);
-  top: var(--top);
-  z-index: calc(10 - var(--i));
 }
 
 

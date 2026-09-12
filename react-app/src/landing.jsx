@@ -23,7 +23,13 @@ const ARCH_X = 60
 const SnapContext = createContext(() => {})
 const EASE_IN_OUT = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
-const card2Bubbles = [card2Base, card2Grg, card2Tutor, card2AstPerson, card2Insta]
+const card2Bubbles = [
+  { src: card2Base,       top: '0%',  left: '0%',  width: '88%', rotate: '0deg' },
+  { src: card2Grg,        top: '14%', left: '12%', width: '88%', rotate: '0deg' },
+  { src: card2Tutor,      top: '32%', left: '24%', width: '88%', rotate: '0deg' },
+  { src: card2AstPerson,  top: '48%', left: '36%', width: '88%', rotate: '0deg' },
+  { src: card2Insta,      top: '64%', left: '48%', width: '88%', rotate: '0deg' },
+]
 const BUBBLE_TOP = [0, 14, 32, 48, 64]
 
 
@@ -215,7 +221,7 @@ function Dots({ progress }) {
 
 
 // card template
-function Card({ text, src, alt = "photo", progress, index = 0 }) {
+function Card({ text, src, alt = "photo", progress, index = 0, mediaClassName = '' }) {
   const start = 0.45 + index * 0.08
   const opacity = useTransform(progress, [start, start + 0.38], [0, 1])
   const y = useTransform(progress, [start, start + 0.42], [70, 0])
@@ -223,7 +229,7 @@ function Card({ text, src, alt = "photo", progress, index = 0 }) {
   return (
     <motion.div className="card" style={{ opacity, y }}>
       <h2>{text}</h2>
-      <div className="card-media">
+      <div className={`card-media ${mediaClassName}`}>
         {src && <img src={src} alt={alt} />}
       </div>
     </motion.div>
@@ -239,20 +245,25 @@ function BubbleCard({ text, images, progress, index = 0 }) {
     <motion.div className="card" style={{ opacity, y }}>
       <h2>{text}</h2>
       <div className="card-bubbles">
-        {images.map((src, i) => (
+        {images.map((img, i) => (
           <img
             key={i}
-            src={src}
+            src={img.src}
             alt=""
             className="card-bubble"
-            style={{ '--i': i, '--top': `${BUBBLE_TOP[i] ?? i * 16}%` }}
+            style={{
+              top: img.top,
+              left: img.left,
+              width: img.width ?? '88%',
+              transform: img.rotate ? `rotate(${img.rotate})` : undefined,
+              zIndex: img.zIndex ?? (10 - i),
+            }}
           />
         ))}
       </div>
     </motion.div>
   )
 }
-
 // page
 function Page() {
   const { scrollY } = useScroll()
@@ -299,7 +310,7 @@ function Page() {
       <section className="features">
         <div className="features-content" style={{ pointerEvents: featEvents }}>
           <div className="container">
-            <Card index={0} progress={progress} text="Truth or Dare with multitiouch" src={card1Content} />
+            <Card index={0} progress={progress} text="Truth or Dare with multitiouch" src={card1Content} mediaClassName="card-media--phone" />
             <BubbleCard index={1} progress={progress} text="Endless UGC- feed picked for you" images={card2Bubbles} />
             <Card index={2} progress={progress} text="Submit your cards, see them in the game" src={card3Content} />
           </div>
