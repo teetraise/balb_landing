@@ -7,6 +7,9 @@
   position: relative;
 }
 
+.hero { background: var(--bg); }
+.features { background: var(--bg-alt); }
+
 
 .flood {
   position: fixed;
@@ -25,27 +28,22 @@
   overflow: hidden;
 }
 
-.hero { background: var(--bg); }
-.features { background: var(--bg-alt); }
 
-.hero-content,
-.features-content {
+
+.hero-content{
   position: absolute;
-  inset: 0;
-  z-index: 2;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 24px;
-  box-sizing: border-box;
-  pointer-events: none;
+  inset: 0;
+  z-index: 2;
+  gap: 0px 40%;
+  will-change: transform, opacity;
 }
 
-.hero-content[data-active='true'],
-.features-content[data-active='true'] {
-  pointer-events: auto;
+.hero-content img{
+  user-select: none;
 }
 
 .hero-content h1,
@@ -59,13 +57,103 @@
   margin-top: 8px;
 }
 
-.hero-content img {
+.hero-right {
+  width: clamp(220px, 30vw, 420px);
+}
+
+.hero-right img {
   display: block;
-  max-width: 100%;
+  width: 100%;
   height: auto;
 }
 
-/* индикатор */
+
+
+
+.features-content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  box-sizing: border-box;
+  will-change: transform, opacity;
+}
+
+.features-content .container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  column-gap: clamp(20px, 3.5vw, 48px);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: stretch;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 36px 32px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  width: clamp(260px, 23vw, 340px);
+  height: clamp(400px, 64vh, 620px);
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.card h2 {
+  margin: 0;
+  text-align: left;
+  align-self: flex-start;
+  color: #111111;
+}
+
+.card-media {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-media img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.card-bubbles {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+.card-bubble {
+  position: absolute;
+  width: 88%;
+  height: auto;
+  display: block;
+  left: calc(var(--i) * 12%);
+  top: var(--top);
+  z-index: calc(10 - var(--i));
+}
+
+
+
 .dots {
   position: fixed;
   right: 28px;
