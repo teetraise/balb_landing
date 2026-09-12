@@ -24,11 +24,11 @@ const SnapContext = createContext(() => {})
 const EASE_IN_OUT = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
 const card2Bubbles = [
-  { src: card2Base,       top: '0%',  left: '0%',  width: '88%', rotate: '0deg' },
-  { src: card2Grg,        top: '14%', left: '12%', width: '88%', rotate: '0deg' },
-  { src: card2Tutor,      top: '32%', left: '24%', width: '88%', rotate: '0deg' },
-  { src: card2AstPerson,  top: '48%', left: '36%', width: '88%', rotate: '0deg' },
-  { src: card2Insta,      top: '64%', left: '48%', width: '88%', rotate: '0deg' },
+  { src: card2Base,       top: '-8%',  left: '0%',  width: '100%', rotate: '-1deg' },
+  { src: card2Grg,        top: '12%', left: '30%', width: '80%',  rotate: '1deg', zIndex: 5 },
+  { src: card2Tutor,      top: '24%', left: '0%',  width: '100%', rotate: '0deg' },
+  { src: card2AstPerson,  top: '42%', left: '0%',  width: '100%', rotate: '-1deg' },
+  { src: card2Insta,      top: '55%', left: '-3%',  width: '105%', rotate: '0deg', zIndex: 11 },
 ]
 const BUBBLE_TOP = [0, 14, 32, 48, 64]
 
@@ -295,7 +295,7 @@ function Page() {
           style={{ opacity: heroOpacity, y: heroY, pointerEvents: heroEvents }}
         >
           <div className='hero-left'>
-            <h1>Get <span style={{color: "red"}}>Balb App</span></h1>
+            <h1>Get <span className="accent">Balb App</span></h1>
             <h2>to break the ice</h2>
             <a className="store-link" href="#">
               <img src={appStore} alt="Скачать в App Store"  style = {{userSelect: "none"}}/>
@@ -305,14 +305,23 @@ function Page() {
             <img src={iphone} alt="Balb App" />
           </motion.div>
         </motion.div>
+
+        <motion.div className="scroll-hint" style={{ opacity: heroOpacity }}>
+          <span className="scroll-hint-bounce">
+            Explore more
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M3 6l5 5 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        </motion.div>
       </section>
 
       <section className="features">
         <div className="features-content" style={{ pointerEvents: featEvents }}>
           <div className="container">
-            <Card index={0} progress={progress} text="Truth or Dare with multitiouch" src={card1Content} mediaClassName="card-media--phone" />
-            <BubbleCard index={1} progress={progress} text="Endless UGC- feed picked for you" images={card2Bubbles} />
-            <Card index={2} progress={progress} text="Submit your cards, see them in the game" src={card3Content} />
+            <Card index={0} progress={progress} text={<>Truth or Dare<br />with multitiouch</>} src={card1Content} mediaClassName="card-media--phone" />
+            <BubbleCard index={1} progress={progress} text={<>Endless UGC-<br />feed picked for <br /> you</>} images={card2Bubbles} />
+            <Card index={2} progress={progress} text={<>Submit your<br />cards, see them<br />in the game</>} src={card3Content} />
           </div>
         </div>
       </section>

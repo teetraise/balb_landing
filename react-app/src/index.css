@@ -1,3 +1,5 @@
+@import './assets/font/stylesheet.css';
+
 :root {
   --bg: #ffffff;
   --bg-alt: #eff9d9;
@@ -5,8 +7,8 @@
   --text-muted: #6b6375;
   --accent: #aa3bff;
 
-  /* TODO: заменить Golos Text на Benzin после покупки лицензии. */
-  --sans: 'Golos Text', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans: 'Benzin', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans-heading: 'Benzin Medium', var(--sans);
 
   font: 400 16px/145% var(--sans);
   letter-spacing: 0.18px;
@@ -19,7 +21,8 @@
 }
 
 h1, h2, h3, h4 {
-  font-weight: 700;
+  font-family: var(--sans-heading);
+  font-weight: 400;
 }
 
 *,

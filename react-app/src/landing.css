@@ -34,11 +34,12 @@
   position: absolute;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: space-between;
   inset: 0;
   z-index: 2;
-  gap: 0px 40%;
+  padding: clamp(64px, 16vh, 140px) clamp(24px, 6vw, 96px) 0;
+  gap: 24px;
   will-change: transform, opacity;
 }
 
@@ -46,28 +47,86 @@
   user-select: none;
 }
 
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
 .hero-content h1,
 .hero-content h2 {
   margin: 0;
-  text-align: center;
+  text-align: left;
+}
+
+.hero-content h1 {
+  font-size: clamp(35px, 5vw, 70px);
+  line-height: 1.2;
+}
+
+.hero-content h1 .accent {
+  color: var(--accent);
+}
+
+.hero-content h2 {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: clamp(16px, 1.6vw, 25px);
+  color: black;
+  margin-top: 10px;
+  margin-left: 1%;
 }
 
 .store-link {
   display: inline-flex;
-  margin-top: 8px;
+  margin-top: 45%;
 }
 
 .hero-right {
-  width: clamp(220px, 30vw, 420px);
+  width: 450px;
+  flex: 0 0 auto;
 }
 
 .hero-right img {
+  transform: translateY(-11%) translateX(-5%);
   display: block;
-  width: 100%;
+  width: 105%;
   height: auto;
 }
 
+.scroll-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(20px, 5vh, 44px);
+  display: flex;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
 
+.scroll-hint-bounce {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: color-mix(in srgb, var(--text) 55%, transparent);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  animation: scroll-hint-bounce 3s ease-in-out infinite;
+}
+
+.scroll-hint-bounce svg {
+  flex: 0 0 auto;
+}
+
+@keyframes scroll-hint-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
 
 
 .features-content {
@@ -90,20 +149,20 @@
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
-  column-gap: clamp(20px, 3.5vw, 48px);
+  column-gap: clamp(20px, 5vw, 50px)
 }
 
 .card {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 50px;
   align-items: stretch;
   background: #ffffff;
   border-radius: 20px;
-  padding: 36px 0 0 0; 
+  padding: 30px 0 0 0; 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  width: clamp(260px, 23vw, 340px);
+  width: clamp(260px, 23vw, 350px);
   height: clamp(400px, 64vh, 620px);
   flex: 0 0 auto;
   box-sizing: border-box;
@@ -111,13 +170,14 @@
 
 .card h2 {
   margin: 0;
-  padding: 0 32px;
+  padding: 0 26px;
   text-align: left;
   align-self: flex-start;
   color: #111111;
 }
 
 .card-media {
+  user-select: none;
   width: 100%;
   flex: 1 1 auto;
   min-height: 0;
@@ -129,22 +189,25 @@
 }
 
 .card-media img {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 90%;
+  max-height: 95%;
   width: auto;
   height: auto;
   object-fit: contain;
   display: block;
 }
 .card-media--phone img {
-  transform: scale(1.12) translateX(4%);
+  transform: scale(1.2) translateX(5%);
 }
 .card-bubbles {
+  user-select: none;
   position: relative;
   width: 100%;
-  flex: 1 1 auto;
+  transform: translateY(8%) translateX(0.2%);
+  flex-basis: auto;
+  flex-grow: 1;
+  flex-shrink: 1;
   min-height: 0;
-  overflow: visible;
 }
 
 .card-bubble {
@@ -152,6 +215,10 @@
   height: auto;
   display: block;
 }
+
+
+
+
 
 
 
@@ -182,6 +249,11 @@
   outline: 2px solid #fff;
   outline-offset: 4px;
 }
+
+
+
+
+/*media*/
 
 @media (max-width: 640px) {
   .dots { right: 16px; gap: 20px; }
