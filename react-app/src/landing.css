@@ -25,7 +25,17 @@
 .features {
   position: relative;
   height: var(--vh);
+}
+
+.hero {
   overflow: hidden;
+}
+
+
+.features {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 
@@ -130,8 +140,8 @@
 
 
 .features-content {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  min-height: 100%;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -158,7 +168,7 @@
   gap: 50px;
   align-items: stretch;
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 11%;
   padding: 30px 0 0 0; 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -170,7 +180,7 @@
 
 .card h2 {
   margin: 0;
-  padding: 0 26px;
+  padding: 0 25px;
   text-align: left;
   align-self: flex-start;
   color: #111111;
@@ -203,11 +213,10 @@
   user-select: none;
   position: relative;
   width: 100%;
-  transform: translateY(8%) translateX(0.2%);
-  flex-basis: auto;
-  flex-grow: 1;
-  flex-shrink: 1;
+  flex: 1 1 auto;
   min-height: 0;
+  overflow: visible;
+  transform: translateY(8%) translateX(0.2%);
 }
 
 .card-bubble {
@@ -259,7 +268,83 @@
   .dots { right: 16px; gap: 20px; }
 }
 
+@media (min-width: 701px) and (max-width: 1180px) {
+  .hero-content { padding: clamp(48px, 10vh, 90px) clamp(20px, 4vw, 56px) 0; }
+  .hero-right { width: clamp(220px, 34vw, 380px); }
+  .features-content .container { column-gap: clamp(14px, 3vw, 28px); }
+  .card { width: clamp(220px, 27vw, 300px); }
+}
+
+@media (max-width: 700px) {
+  .hero-content {
+    flex-direction: column;
+    align-items: center;
+    padding: clamp(28px, 9vh, 56px) 22px clamp(16px, 4vh, 28px);
+  }
+
+  .hero-left {
+    display: contents;
+
+  }
+
+  .hero-content h1 { order: 1; }
+  .hero-content h2 { order: 2; margin-top: -20%; }
+  .hero-right { order: 3; }
+  .store-link { order: 4; }
+
+  .hero-right {
+    align-self: center;
+    width: min(78vw, 54vh, 400px);
+  }
+
+  .hero-right img { transform: none; width: 120%; transform: translateY(-5%); }
+
+  .store-link { align-self: center; margin-top: 10px; }
+
+  .features-content {
+    padding: clamp(8px, 1.6vh, 16px) 14px;
+  }
+
+  .features-content .container {
+    flex-direction: column;
+    row-gap: 20px;
+  }
+
+  .card {
+    width: 130%;
+    height: 280px;
+    gap: 0px;
+    padding: clamp(8px, 1.4vh, 14px) 0;
+  }
+
+  .card h2 {
+    font-size: clamp(14px, 2vh, 18px);
+  }
+
+  .card-media {
+    min-height: clamp(90px, 18vh, 150px);
+  }
+
+
+  .card-media img {
+    max-height: 180px;
+    max-width: 80%;
+    transform: translateY(10%);
+  }
+
+  .card-bubbles {
+    margin-top: -5%;
+    min-height: 10px;
+  }
+
+  .card-media--phone img {
+    transform: none;
+    transform: scale(1.2)translateX(15%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .flood { transition: none; }
   .dots button { transition: none; }
 }
+

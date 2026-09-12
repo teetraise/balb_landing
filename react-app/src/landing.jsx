@@ -23,15 +23,36 @@ const ARCH_X = 60
 const SnapContext = createContext(() => {})
 const EASE_IN_OUT = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
-const card2Bubbles = [
-  { src: card2Base,       top: '-8%',  left: '0%',  width: '100%', rotate: '-1deg' },
-  { src: card2Grg,        top: '12%', left: '30%', width: '80%',  rotate: '1deg', zIndex: 5 },
-  { src: card2Tutor,      top: '24%', left: '0%',  width: '100%', rotate: '0deg' },
-  { src: card2AstPerson,  top: '42%', left: '0%',  width: '100%', rotate: '-1deg' },
-  { src: card2Insta,      top: '55%', left: '-3%',  width: '105%', rotate: '0deg', zIndex: 11 },
-]
-const BUBBLE_TOP = [0, 14, 32, 48, 64]
+const MOBILE_BREAKPOINT = 700
 
+const card2Bubbles = [
+  { src: card2Base,       top: '-8%', shiftX: '0%',  width: '100%', rotate: '-1deg',
+    mobile: { top: '-10%', width: '80%' } },
+  { src: card2Grg,        top: '12%', shiftX: '20%', width: '80%',  rotate: '1deg', zIndex: 5,
+    mobile: {top: '12%', width: '60%'} },
+  { src: card2Tutor,      top: '24%', shiftX: '0%',  width: '100%', rotate: '0deg',
+    mobile: {top: '24%', width: '80%'} },
+  { src: card2AstPerson,  top: '42%', shiftX: '0%',  width: '100%', rotate: '-1deg',
+    mobile: {top: '42%', width: '80%'} },
+  { src: card2Insta,      top: '55%', shiftX: '0%',  width: '105%', rotate: '0deg', zIndex: 11,
+    mobile: {top: '55%', width: '95%'} },
+]
+
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`)
+    const onChange = (e) => setIsMobile(e.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  return isMobile
+}
 
 // user`s data
 function useViewport() {
@@ -79,6 +100,10 @@ function SnapProvider({ children }) {
     lenis.scrollTo(0, { immediate: true, force: true })
     indexRef.current = 0
     lenis.stop()
+    const featuresEl = document.querySelector('.features')
+    const featuresAtTop = () => !featuresEl || featuresEl.scrollTop <= 0
+    const featuresAtBottom = () =>
+      !featuresEl || featuresEl.scrollTop + featuresEl.clientHeight >= featuresEl.scrollHeight - 1
 
     let unlockTimer
 
@@ -105,10 +130,26 @@ function SnapProvider({ children }) {
       if (lockRef.current || Math.abs(delta) < 6) return
       go(indexRef.current + (delta > 0 ? 1 : -1))
     }
-    const onWheel = (e) => { e.preventDefault(); trigger(e.deltaY) }
+
+    const onWheel = (e) => {
+      if (indexRef.current === 1 && featuresEl) {
+        const scrollingIntoFeatures = e.deltaY > 0 && !featuresAtBottom()
+        const scrollingUpInsideFeatures = e.deltaY < 0 && !featuresAtTop()
+        if (scrollingIntoFeatures || scrollingUpInsideFeatures) {
+          e.preventDefault()
+          featuresEl.scrollTop += e.deltaY
+          return
+        }
+        if (e.deltaY > 0 && featuresAtBottom()) return
+      }
+      e.preventDefault()
+      trigger(e.deltaY)
+    }
 
     let dragging = false
+    let dragMode = 'page'
     let startY = 0
+    let lastTouchY = 0
     let startScroll = 0
     let lastDelta = 0
 
@@ -116,17 +157,43 @@ function SnapProvider({ children }) {
 
     const onTouchStart = (e) => {
       if (lockRef.current) return
-      dragging = true
       startY = e.touches[0].clientY
-      startScroll = indexRef.current * vh()
+      lastTouchY = startY
       lastDelta = 0
+
+      if (indexRef.current === 1) {
+        dragMode = 'inner'
+        dragging = false
+      } else {
+        dragMode = 'page'
+        dragging = true
+        startScroll = indexRef.current * vh()
+      }
     }
 
     const onTouchMove = (e) => {
+      const currentY = e.touches[0].clientY
+
+      if (dragMode === 'inner') {
+        const step = lastTouchY - currentY
+        lastTouchY = currentY
+
+        if (step < 0 && featuresAtTop()) {
+          dragMode = 'page'
+          dragging = true
+          startY = currentY
+          startScroll = indexRef.current * vh()
+        } else {
+          e.preventDefault()
+          if (featuresEl) featuresEl.scrollTop += step
+          return
+        }
+      }
+
       if (!dragging) return
       e.preventDefault()
 
-      const delta = startY - e.touches[0].clientY
+      const delta = startY - currentY
       const maxScroll = vh()
 
       const raw = startScroll + delta
@@ -140,7 +207,7 @@ function SnapProvider({ children }) {
     }
 
     const onTouchEnd = () => {
-      if (!dragging) return
+      if (!dragging) { dragMode = 'page'; return }
       dragging = false
 
       const threshold = vh() * 0.18
@@ -240,12 +307,15 @@ function BubbleCard({ text, images, progress, index = 0 }) {
   const start = 0.45 + index * 0.08
   const opacity = useTransform(progress, [start, start + 0.38], [0, 1])
   const y = useTransform(progress, [start, start + 0.42], [70, 0])
+  const isMobile = useIsMobile()
 
   return (
     <motion.div className="card" style={{ opacity, y }}>
       <h2>{text}</h2>
       <div className="card-bubbles">
-        {images.map((img, i) => (
+        {images.map((raw, i) => {
+          const img = isMobile ? { ...raw, ...raw.mobile } : raw
+          return (
           <img
             key={i}
             src={img.src}
@@ -253,13 +323,14 @@ function BubbleCard({ text, images, progress, index = 0 }) {
             className="card-bubble"
             style={{
               top: img.top,
-              left: img.left,
+              left: `calc(50% + ${img.shiftX ?? '0%'})`,
               width: img.width ?? '88%',
-              transform: img.rotate ? `rotate(${img.rotate})` : undefined,
+              transform: `translateX(-50%)${img.rotate ? ` rotate(${img.rotate})` : ''}`,
               zIndex: img.zIndex ?? (10 - i),
             }}
           />
-        ))}
+          )
+        })}
       </div>
     </motion.div>
   )
@@ -277,10 +348,21 @@ function Page() {
   const borderRadius = useMotionTemplate`${rx}% ${rx}% 0 0 / ${ry}px ${ry}px 0 0`
 
   const heroOpacity = useTransform(progress, [0, 0.48], [1, 0])
-  const heroY = useTransform(progress, [0, 0.48], [0, -50])
   const heroEvents = useTransform(progress, (p) => (p < 0.5 ? 'auto' : 'none'))
 
-  const phoneY = useTransform(progress, [0, 0.48], [0, -90])
+  const titleY = useTransform(progress, [0, 0.4], [0, -26])
+  const titleOpacity = useTransform(progress, [0, 0.4], [1, 0])
+  const titleBlurPx = useTransform(progress, [0, 0.4], [0, 4])
+  const titleBlur = useMotionTemplate`blur(${titleBlurPx}px)`
+
+  const subtitleY = useTransform(progress, [0.02, 0.43], [0, -20])
+  const subtitleOpacity = useTransform(progress, [0.02, 0.43], [1, 0])
+
+  const ctaY = useTransform(progress, [0.04, 0.46], [0, -14])
+  const ctaOpacity = useTransform(progress, [0.04, 0.46], [1, 0])
+
+  const phoneY = useTransform(progress, [0, 0.48], [0, -70])
+  const phoneScale = useTransform(progress, [0, 0.48], [1, 0.95])
 
   const featEvents = useTransform(progress, (p) => (p > 0.5 ? 'auto' : 'none'))
 
@@ -292,16 +374,18 @@ function Page() {
       <section className="hero">
         <motion.div
           className="hero-content"
-          style={{ opacity: heroOpacity, y: heroY, pointerEvents: heroEvents }}
+          style={{ pointerEvents: heroEvents }}
         >
           <div className='hero-left'>
-            <h1>Get <span className="accent">Balb App</span></h1>
-            <h2>to break the ice</h2>
-            <a className="store-link" href="#">
+            <motion.h1 style={{ opacity: titleOpacity, y: titleY, filter: titleBlur }}>
+              Get <span className="accent">Balb App</span>
+            </motion.h1>
+            <motion.h2 style={{ opacity: subtitleOpacity, y: subtitleY }}>to break the ice</motion.h2>
+            <motion.a className="store-link" href="#" style={{ opacity: ctaOpacity, y: ctaY }}>
               <img src={appStore} alt="Скачать в App Store"  style = {{userSelect: "none"}}/>
-            </a>
+            </motion.a>
           </div>
-          <motion.div className='hero-right' style={{ y: phoneY }}>
+          <motion.div className='hero-right' style={{ y: phoneY, scale: phoneScale }}>
             <img src={iphone} alt="Balb App" />
           </motion.div>
         </motion.div>
