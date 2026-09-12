@@ -1,13 +1,15 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useMotionTemplate, useMotionValueEvent } from 'framer-motion'
+import {motion, AnimatePresence, useScroll, useTransform, useMotionTemplate, useMotionValueEvent } from 'framer-motion'
 import { ReactLenis, useLenis } from 'lenis/react'
 import appStore from './assets/appstore.png'
 import './landing.css'
 
 const PEEK = 85
-const ARCH_X = 65
+const ARCH_X = 60
 
 const SnapContext = createContext(() => {})
+
+const contentTransition = { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
 
 function useViewport() {
   const [vh, setVh] = useState(() =>
@@ -140,22 +142,21 @@ function Dots({ progress }) {
   )
 }
 
-
-
-
-
 function Page() {
   const { scrollY } = useScroll()
   const { vh, depth } = useViewport()
+  const [active, setActive] = useState(0)
+
   const progress = useTransform(scrollY, [0, vh], [0, 1])
+
+  useMotionValueEvent(progress, 'change', (p) => {
+    setActive(p > 0.5 ? 1 : 0)
+  })
 
   const y = useTransform(progress, [0, 1], [`${PEEK}%`, '0%'])
   const rx = useTransform(progress, [0, 1], [ARCH_X, 0])
   const ry = useTransform(progress, [0, 1], [depth, 0])
   const borderRadius = useMotionTemplate`${rx}% ${rx}% 0 0 / ${ry}px ${ry}px 0 0`
-
-  const heroOpacity = useTransform(progress, [0, 0.4], [1, 0])
-  const featuresOpacity = useTransform(progress, [0.6, 1], [0, 1])
 
   return (
     <div className="page">
@@ -163,18 +164,43 @@ function Page() {
       <Dots progress={progress} />
 
       <section className="hero">
-        <motion.div className="hero-content" style={{ opacity: heroOpacity }}>
-          <h1>Get Balb App</h1>
-          <h2>to break the ice</h2>
-          <a className="store-link" href="#">
-            <img src={appStore} alt="Скачать в App Store" />
-          </a>
-        </motion.div>
+        <AnimatePresence mode="wait">
+          {active === 0 && (
+            <motion.div
+              key="hero"
+              className="hero-content"
+              data-active="true"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={contentTransition}
+            >
+              <h1>Get Balb App</h1>
+              <h2>to break the ice</h2>
+              <a className="store-link" href="#">
+                <img src={appStore} alt="Скачать в App Store" />
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
       <section className="features">
-        <motion.div className="features-content" style={{ opacity: featuresOpacity }}>
-        </motion.div>
+        <AnimatePresence mode="wait">
+          {active === 1 && (
+            <motion.div
+              key="features"
+              className="features-content"
+              data-active="true"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={contentTransition}
+            >
+              {/* контент секции возможностей */}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
     </div>
   )
