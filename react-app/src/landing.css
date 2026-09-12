@@ -327,7 +327,7 @@
 
 
   .card-media img {
-    max-height: 180px;
+    max-height: 190px;
     max-width: 80%;
     transform: translateY(10%);
   }
@@ -339,7 +339,7 @@
 
   .card-media--phone img {
     transform: none;
-    transform: scale(1.2)translateX(15%);
+    transform: scale(1.4)translateX(5%) translateY(14%);
   }
 }
 
