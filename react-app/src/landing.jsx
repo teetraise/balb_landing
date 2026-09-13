@@ -22,6 +22,7 @@ const PEEK = 85
 const ARCH_X = 60
 const SnapContext = createContext(() => {})
 const EASE_IN_OUT = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+const getViewportHeight = () => window.visualViewport?.height ?? window.innerHeight
 
 const MOBILE_BREAKPOINT = 700
 
@@ -57,13 +58,13 @@ function useIsMobile() {
 // user`s data
 function useViewport() {
   const [vh, setVh] = useState(() =>
-    typeof window === 'undefined' ? 800 : window.innerHeight
+    typeof window === 'undefined' ? 800 : getViewportHeight()
   )
   const [depth, setDepth] = useState(140)
 
   useEffect(() => {
     const sync = () => {
-      const h = window.innerHeight
+      const h = getViewportHeight()
       const w = window.innerWidth
 
       setVh(h)
@@ -74,10 +75,12 @@ function useViewport() {
     sync()
     window.addEventListener('resize', sync)
     window.addEventListener('orientationchange', sync)
+    window.visualViewport?.addEventListener('resize', sync)
 
     return () => {
       window.removeEventListener('resize', sync)
       window.removeEventListener('orientationchange', sync)
+      window.visualViewport?.removeEventListener('resize', sync)
     }
   }, [])
 
@@ -112,7 +115,7 @@ function SnapProvider({ children }) {
       clearTimeout(unlockTimer)
       unlockTimer = setTimeout(() => { lockRef.current = false }, duration * 1000 + 120)
 
-      lenis.scrollTo(next * window.innerHeight, {
+      lenis.scrollTo(next * getViewportHeight(), {
         duration,
         force: true,
         easing: EASE_IN_OUT,
@@ -153,7 +156,7 @@ function SnapProvider({ children }) {
     let startScroll = 0
     let lastDelta = 0
 
-    const vh = () => window.innerHeight
+    const vh = () => getViewportHeight()
 
     const onTouchStart = (e) => {
       if (lockRef.current) return
@@ -226,7 +229,7 @@ function SnapProvider({ children }) {
     }
 
     const onResize = () =>
-      lenis.scrollTo(indexRef.current * window.innerHeight, { immediate: true, force: true })
+      lenis.scrollTo(indexRef.current * getViewportHeight(), { immediate: true, force: true })
 
     window.addEventListener('wheel', onWheel, { passive: false })
     window.addEventListener('touchstart', onTouchStart, { passive: true })
@@ -235,6 +238,7 @@ function SnapProvider({ children }) {
     window.addEventListener('touchcancel', onTouchEnd, { passive: true })
     window.addEventListener('keydown', onKey)
     window.addEventListener('resize', onResize)
+    window.visualViewport?.addEventListener('resize', onResize)
 
     return () => {
       clearTimeout(unlockTimer)
@@ -246,6 +250,7 @@ function SnapProvider({ children }) {
       window.removeEventListener('touchcancel', onTouchEnd)
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('resize', onResize)
+      window.visualViewport?.removeEventListener('resize', onResize)
     }
   }, [lenis])
 
