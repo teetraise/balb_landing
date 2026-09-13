@@ -47,6 +47,8 @@
   align-items: flex-start;
   justify-content: space-between;
   inset: 0;
+  max-width: 1600px;
+  margin: 0 auto;
   z-index: 2;
   padding: clamp(48px, 12vh, 140px) clamp(20px, 5vw, 96px) 0;
   gap: 24px;
