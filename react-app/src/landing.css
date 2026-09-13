@@ -36,6 +36,7 @@
 .features {
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 
 
@@ -279,6 +280,10 @@
   .features {
     scroll-snap-align: start;
     scroll-snap-stop: always;
+  }
+
+  .features {
+    overflow: hidden;
   }
 
   .hero-content {
