@@ -386,7 +386,12 @@ function Page() {
             </motion.a>
           </div>
           <motion.div className='hero-right' style={{ y: phoneY, scale: phoneScale }}>
-            <img src={iphone} alt="Balb App" />
+            <motion.div
+              animate={{ y: [0, -14, 0], rotate: [0, 1.2, 0] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <img src={iphone} alt="Balb App" />
+            </motion.div>
           </motion.div>
         </motion.div>
 
