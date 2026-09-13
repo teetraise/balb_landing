@@ -271,12 +271,22 @@
 }
 
 @media (max-width: 700px) {
+  html {
+    scroll-snap-type: y mandatory;
+  }
+
+  .hero,
+  .features {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
   .hero-content {
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 14px;
-    padding: clamp(20px, 7vh, 44px) 22px clamp(12px, 3vh, 20px);
+    padding: clamp(20px, 7vh, 44px) 22px clamp(16px, 4vh, 28px);
   }
 
   .hero-left {
@@ -291,12 +301,20 @@
 
   .hero-right {
     align-self: center;
-    width: min(46vw, 24vh, 240px);
+    width: min(58vw, 30vh, 300px);
+    margin-top: auto;
+    margin-bottom: auto;
   }
 
   .hero-right img { transform: none; width: 120%; transform: translateY(-2%); }
 
-  .store-link { align-self: center; margin-top: 10px; }
+  .store-link {
+    align-self: center;
+    margin-top: 0;
+    width: min(46vw, 170px);
+  }
+
+  .store-link img { width: 100%; height: auto; display: block; }
 
   .features-content {
     padding: clamp(8px, 1.6vh, 16px) 14px;
@@ -309,9 +327,13 @@
 
   .card {
     width: min(88vw, 340px);
-    height: clamp(150px, 26vh, 210px);
+    height: clamp(150px, 24vh, 205px);
     gap: 0px;
     padding: clamp(8px, 1.4vh, 14px) 0;
+  }
+
+  .card--bubbles {
+    height: clamp(210px, 34vh, 270px);
   }
 
   .card h2 {

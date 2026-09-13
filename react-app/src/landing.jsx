@@ -95,9 +95,49 @@ function SnapProvider({ children }) {
   const indexRef = useRef(0)
   const lockRef = useRef(false)
   const goRef = useRef(() => {})
+  const isMobile = useIsMobile()
+
+  // Mobile: hand-rolled touch hijacking (preventDefault + manual scrollTo on every
+  // touchmove) is unreliable on real iOS Safari - it can leave the page stuck on a
+  // stale/blank frame. Let the browser scroll natively and use CSS scroll-snap
+  // (see .hero/.features scroll-snap-align) instead; only wire up dot/keyboard nav.
+  useEffect(() => {
+    if (!lenis || !isMobile) return
+
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+    lenis.scrollTo(0, { immediate: true, force: true })
+    indexRef.current = 0
+
+    const animateTo = (next, duration = 1.2) => {
+      lenis.scrollTo(next * getViewportHeight(), { duration, force: true, easing: EASE_IN_OUT })
+    }
+
+    const go = (next) => {
+      if (next < 0 || next > 1) return
+      indexRef.current = next
+      animateTo(next)
+    }
+    goRef.current = go
+
+    const onScroll = () => {
+      indexRef.current = window.scrollY > getViewportHeight() / 2 ? 1 : 0
+    }
+    const onKey = (e) => {
+      if (['ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(indexRef.current + 1) }
+      if (['ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(indexRef.current - 1) }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('keydown', onKey)
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [lenis, isMobile])
 
   useEffect(() => {
-    if (!lenis) return
+    if (!lenis || isMobile) return
 
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
     lenis.scrollTo(0, { immediate: true, force: true })
@@ -252,7 +292,7 @@ function SnapProvider({ children }) {
       window.removeEventListener('resize', onResize)
       window.visualViewport?.removeEventListener('resize', onResize)
     }
-  }, [lenis])
+  }, [lenis, isMobile])
 
   return (
     <SnapContext.Provider value={(i) => goRef.current(i)}>
@@ -315,7 +355,7 @@ function BubbleCard({ text, images, progress, index = 0 }) {
   const isMobile = useIsMobile()
 
   return (
-    <motion.div className="card" style={{ opacity, y }}>
+    <motion.div className="card card--bubbles" style={{ opacity, y }}>
       <h2>{text}</h2>
       <div className="card-bubbles">
         {images.map((raw, i) => {
