@@ -97,10 +97,6 @@ function SnapProvider({ children }) {
   const goRef = useRef(() => {})
   const isMobile = useIsMobile()
 
-  // Mobile: hand-rolled touch hijacking (preventDefault + manual scrollTo on every
-  // touchmove) is unreliable on real iOS Safari - it can leave the page stuck on a
-  // stale/blank frame. Let the browser scroll natively and use CSS scroll-snap
-  // (see .hero/.features scroll-snap-align) instead; only wire up dot/keyboard nav.
   useEffect(() => {
     if (!lenis || !isMobile) return
 
@@ -380,6 +376,44 @@ function BubbleCard({ text, images, progress, index = 0 }) {
     </motion.div>
   )
 }
+// TEMP DEBUG - remove once the blank section-2 bug on real phones is diagnosed
+function DebugOverlay({ vh }) {
+  const [info, setInfo] = useState({})
+  useEffect(() => {
+    const tick = () => {
+      const featuresEl = document.querySelector('.features')
+      const firstCard = document.querySelector('.features-content .container .card')
+      const cardRect = firstCard ? firstCard.getBoundingClientRect() : null
+      setInfo({
+        scrollY: Math.round(window.scrollY),
+        innerH: window.innerHeight,
+        vvH: window.visualViewport?.height ?? 'n/a',
+        vhState: Math.round(vh),
+        docHeight: document.documentElement.scrollHeight,
+        featClientH: featuresEl?.clientHeight,
+        featScrollH: featuresEl?.scrollHeight,
+        cardTop: cardRect ? Math.round(cardRect.top) : 'no-card',
+        cardOpacity: firstCard ? getComputedStyle(firstCard).opacity : 'n/a',
+        isMobile: window.matchMedia('(max-width: 700px)').matches,
+      })
+    }
+    tick()
+    const id = setInterval(tick, 300)
+    return () => clearInterval(id)
+  }, [vh])
+
+  return (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, zIndex: 999,
+      background: 'rgba(0,0,0,0.85)', color: '#0f0',
+      font: '11px monospace', padding: '6px 8px', lineHeight: 1.5,
+      pointerEvents: 'none', whiteSpace: 'pre',
+    }}>
+      {Object.entries(info).map(([k, v]) => `${k}: ${v}`).join('\n')}
+    </div>
+  )
+}
+
 // page
 function Page() {
   const { scrollY } = useScroll()
@@ -415,6 +449,7 @@ function Page() {
     <div className="page">
       <motion.div className="flood" style={{ y, borderRadius }} />
       <Dots progress={progress} />
+      <DebugOverlay vh={vh} />
 
       <section className="hero">
         <motion.div
