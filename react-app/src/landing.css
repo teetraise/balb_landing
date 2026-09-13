@@ -146,7 +146,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: safe center;
   gap: 16px;
   padding: 24px;
   box-sizing: border-box;
@@ -334,6 +334,10 @@
   .card-media--phone img {
     transform: none;
     transform: scale(1.4)translateX(5%) translateY(14%);
+  }
+
+  .scroll-hint-label {
+    display: none;
   }
 }
 

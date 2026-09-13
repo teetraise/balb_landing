@@ -397,7 +397,7 @@ function Page() {
 
         <motion.div className="scroll-hint" style={{ opacity: heroOpacity }}>
           <span className="scroll-hint-bounce">
-            Explore more
+            <span className="scroll-hint-label">Explore more</span>
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M3 6l5 5 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
