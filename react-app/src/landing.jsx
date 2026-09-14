@@ -28,15 +28,15 @@ const MOBILE_BREAKPOINT = 700
 
 const card2Bubbles = [
   { src: card2Base,       top: '-8%', shiftX: '0%',  width: '100%', rotate: '-1deg',
-    mobile: { top: '-12%', width: '80%', rotate: '0deg', } },
+    mobile: { top: '-22%', width: '95%', rotate: '0deg', } },
   { src: card2Grg,        top: '12%', shiftX: '8%', width: '80%',  rotate: '1deg', zIndex: 5,
-    mobile: {top: '12%', width: '60%'} },
+    mobile: {top: '7%', width: '67%'} },
   { src: card2Tutor,      top: '24%', shiftX: '0%',  width: '100%', rotate: '0deg',
-    mobile: {top: '25%', width: '80%'} },
+    mobile: {top: '25%', width: '92%'} },
   { src: card2AstPerson,  top: '42%', shiftX: '0%',  width: '100%', rotate: '-1deg',
-    mobile: {top: '42%', width: '80%'} },
+    mobile: {top: '45%', width: '85%'} },
   { src: card2Insta,      top: '55%', shiftX: '0%',  width: '105%', rotate: '0deg', zIndex: 11,
-    mobile: {top: '55%', width: '95%'} },
+    mobile: {top: '50%', width: '100%'} },
 ]
 
 
