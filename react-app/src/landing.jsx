@@ -8,7 +8,7 @@ import iphone from "./assets/iphonebalb.png"
 import card1Content from './assets/card1/card1-content.png'
 import card3Content from './assets/card3/card3-content.png'
 
-import card2Base from './assets/card2/first.png'
+import card2Base from "./assets/card2/who's_last.png"
 import card2Grg from './assets/card2/second.png'
 import card2Tutor from './assets/card2/third.png'
 import card2AstPerson from './assets/card2/grg.png'
@@ -27,8 +27,8 @@ const getViewportHeight = () => window.visualViewport?.height ?? window.innerHei
 const MOBILE_BREAKPOINT = 700
 
 const card2Bubbles = [
-  { src: card2Base,       top: '-8%', shiftX: '0%',  width: '100%', rotate: '-1deg',
-    mobile: { top: '-22%', width: '95%', rotate: '0deg', } },
+  { src: card2Base,       top: '-8%', shiftX: '0%',  width: '100%', rotate: '-4deg',
+    mobile: { top: '-22%', width: '95%', rotate: '-4deg', } },
   { src: card2Grg,        top: '12%', shiftX: '8%', width: '80%',  rotate: '1deg', zIndex: 5,
     mobile: {top: '7%', width: '67%'} },
   { src: card2Tutor,      top: '24%', shiftX: '0%',  width: '100%', rotate: '0deg',
