@@ -459,7 +459,26 @@ function Page() {
   )
 }
 
+function useVisitNotification() {
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem('visit-notified')) return
+      sessionStorage.setItem('visit-notified', '1')
+    } catch {
+      // sessionStorage unavailable (private mode etc.) - notify anyway, just can't dedupe
+    }
+
+    fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: window.location.pathname }),
+    }).catch(() => {})
+  }, [])
+}
+
 export default function App() {
+  useVisitNotification()
+
   return (
     <ReactLenis root options={{ lerp: 0.08 }}>
       <SnapProvider>
