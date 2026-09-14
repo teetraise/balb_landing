@@ -360,7 +360,7 @@
   .card-media img {
     max-height: 100%;
     max-width: 100%;
-    transform: translateY(10%) scale(1.2);
+    transform: translateY(5%) scale(1.3);
   }
 
   .card-bubbles {
