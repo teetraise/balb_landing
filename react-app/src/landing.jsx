@@ -14,7 +14,7 @@ import card2Tutor from './assets/card2/third.png'
 import card2AstPerson from './assets/card2/grg.png'
 import card2Insta from './assets/card2/insta.png'
 
-import { initYandexMetrika } from './analytics'
+import { Analytics } from '@vercel/analytics/react'
 
 import './landing.css'
 
@@ -387,11 +387,7 @@ function CookieWindow() {
 
   useEffect(() => {
     try {
-      if (localStorage.getItem(COOKIE_CONSENT_KEY)) {
-        initYandexMetrika()
-      } else {
-        setVisible(true)
-      }
+      if (!localStorage.getItem(COOKIE_CONSENT_KEY)) setVisible(true)
     } catch {
       setVisible(true)
     }
@@ -402,7 +398,6 @@ function CookieWindow() {
       localStorage.setItem(COOKIE_CONSENT_KEY, '1')
     } catch {
     }
-    initYandexMetrika()
     setVisible(false)
   }
 
@@ -539,6 +534,7 @@ export default function App() {
         </SnapProvider>
       </ReactLenis>
       <CookieWindow />
+      <Analytics />
     </>
   )
 }
