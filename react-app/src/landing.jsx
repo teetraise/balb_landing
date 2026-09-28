@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform, useMotionTemplate, useMotionValueEvent } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform, useMotionTemplate, useMotionValueEvent } from 'framer-motion'
 import { ReactLenis, useLenis } from 'lenis/react'
 
 import appStore from './assets/appstore.png'
@@ -376,6 +376,52 @@ function BubbleCard({ text, images, progress, index = 0 }) {
     </motion.div>
   )
 }
+
+
+const COOKIE_CONSENT_KEY = 'cookie-consent-accepted'
+
+function CookieWindow() {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem(COOKIE_CONSENT_KEY)) setVisible(true)
+    } catch {
+      setVisible(true)
+    }
+  }, [])
+
+  const accept = () => {
+    try {
+      localStorage.setItem(COOKIE_CONSENT_KEY, '1')
+    } catch {
+    }
+    setVisible(false)
+  }
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          className="cookie-banner"
+          role="dialog"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 24 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+        >
+          <p className="cookie-banner-text">
+            Мы используем файлы cookie для улучшения работы сайта.
+            Продолжая пользоваться сайтом, вы соглашаетесь с их использованием.
+          </p>
+          <button className="cookie-banner-btn" onClick={accept}>
+            Хорошо
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
 // page
 function Page() {
   const { scrollY } = useScroll()
@@ -465,7 +511,6 @@ function useVisitNotification() {
       if (sessionStorage.getItem('visit-notified')) return
       sessionStorage.setItem('visit-notified', '1')
     } catch {
-      // sessionStorage unavailable (private mode etc.) - notify anyway, just can't dedupe
     }
 
     fetch('/api/notify', {
@@ -480,10 +525,13 @@ export default function App() {
   useVisitNotification()
 
   return (
-    <ReactLenis root options={{ lerp: 0.08 }}>
-      <SnapProvider>
-        <Page />
-      </SnapProvider>
-    </ReactLenis>
+    <>
+      <ReactLenis root options={{ lerp: 0.08 }}>
+        <SnapProvider>
+          <Page />
+        </SnapProvider>
+      </ReactLenis>
+      <CookieWindow />
+    </>
   )
 }
